@@ -83,7 +83,147 @@
     .notice-modal h2 { margin: 0; color: #172033; font-size: 1.3rem; }
     .notice-modal p { margin: 10px 0 22px; color: #61708a; line-height: 1.6; }
     .notice-modal .btn { min-width: 132px; }
-  </style>
+  
+
+    /* ---------- Professional Email Modal ---------- */
+    .email-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 26, 43, 0.55);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 20px;
+    }
+
+    .email-modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .email-modal {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 36px 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 60px rgba(0, 15, 30, 0.25);
+      position: relative;
+      transform: translateY(16px) scale(0.97);
+      transition: transform 0.25s ease;
+    }
+
+    .email-modal-overlay.show .email-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .email-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .email-modal-close:hover {
+      background: #e2e8f0;
+      color: #1e2a3e;
+    }
+
+    .email-modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #dbeafe, #eef4ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    .email-modal-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f1a2b;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .email-modal-subtitle {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .email-modal-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #ccd9f0;
+      border-radius: 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+      background: #f8fafc;
+    }
+
+    .email-modal-input:focus {
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .email-modal-input.input-error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .email-modal-error {
+      min-height: 20px;
+      font-size: 0.85rem;
+      color: #dc2626;
+      margin-top: 8px;
+    }
+
+    .email-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .email-modal-actions .btn {
+      margin: 0;
+      padding: 10px 26px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      .email-modal {
+        padding: 28px 22px 22px;
+      }
+      .email-modal-actions .btn {
+        flex: 1;
+      }
+    }
+
+</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -118,12 +258,30 @@
     <button class="btn btn-primary" id="noticeModalClose" type="button">我知道了</button>
   </section>
 </div>
+
+
+<!-- 专业 Email 收件者弹窗 -->
+<div class="email-modal-overlay" id="emailModalOverlay">
+  <div class="email-modal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
+    <button class="email-modal-close" id="emailModalClose" aria-label="关闭">✕</button>
+    <div class="email-modal-icon">📧</div>
+    <h2 class="email-modal-title" id="emailModalTitle">Send Results to Teacher</h2>
+    <p class="email-modal-subtitle">Enter the recipient's email address to send <span id="emailModalStudent">test’s </span>quiz report.</p>
+    <input type="email" id="emailModalInput" class="email-modal-input" placeholder="teacher@example.com" autocomplete="email">
+    <div class="email-modal-error" id="emailModalError"></div>
+    <div class="email-modal-actions">
+      <button class="btn btn-secondary" id="emailModalCancel">Cancel</button>
+      <button class="btn btn-primary" id="emailModalSend">Send Results</button>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
   (function() {
-    const EMAILJS_PUBLIC_KEY = 'n-DWu6kPsXnwUz8Ug';
-    const EMAILJS_SERVICE_ID = 'service_i0nwfwi';
-    const EMAILJS_TEMPLATE_ID = 'template_4d1w3fg';
+    const EMAILJS_PUBLIC_KEY = 'JAWHSz403PjMAwCk4';
+    const EMAILJS_SERVICE_ID = 'service_ddwmsoi';
+    const EMAILJS_TEMPLATE_ID = 'template_5lfzy0j';
     if (typeof emailjs !== 'undefined') { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
     const quiz_name = '1000';
     const CHARACTERS = [
@@ -201,6 +359,61 @@
     soundToggle.addEventListener('click', () => { soundEnabled = !soundEnabled; updateSoundToggleUI(); if (soundEnabled) { const ctx = getAudioContext(); if (ctx) { const now = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(880, now); gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now + 0.2); } } });
     let toastTimeout = null;
     function showToast(message, type = 'info', duration = 3500) { if (toastTimeout) clearTimeout(toastTimeout); toast.textContent = message; toast.className = 'toast show ' + type; toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, duration); }
+
+
+    function showEmailPrompt() {
+      return new Promise((resolve) => {
+        const overlay  = document.getElementById('emailModalOverlay');
+        const input    = document.getElementById('emailModalInput');
+        const error    = document.getElementById('emailModalError');
+        const sendBtn  = document.getElementById('emailModalSend');
+        const cancelBtn = document.getElementById('emailModalCancel');
+        const closeBtn = document.getElementById('emailModalClose');
+        const studentSpan = document.getElementById('emailModalStudent');
+
+        studentSpan.textContent = studentName ? (studentName + '’s ') : '';
+        input.value = '';
+        input.classList.remove('input-error');
+        error.textContent = '';
+        overlay.classList.add('show');
+
+        const cleanup = () => {
+          overlay.classList.remove('show');
+          sendBtn.removeEventListener('click', onSend);
+          cancelBtn.removeEventListener('click', onCancel);
+          closeBtn.removeEventListener('click', onCancel);
+          overlay.removeEventListener('click', onOverlayClick);
+          input.removeEventListener('keydown', onKeydown);
+        };
+
+        const onSend = () => {
+          const value = input.value.trim();
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(value)) {
+            error.textContent = '⚠️ Please enter a valid email address (e.g. teacher@example.com).';
+            input.classList.add('input-error');
+            input.focus();
+            return;
+          }
+          cleanup();
+          resolve(value);
+        };
+
+        const onCancel = () => { cleanup(); resolve(null); };
+        const onOverlayClick = (e) => { if (e.target === overlay) onCancel(); };
+        const onKeydown = (e) => {
+          if (e.key === 'Enter')  { e.preventDefault(); onSend(); }
+          if (e.key === 'Escape') { onCancel(); }
+        };
+
+        sendBtn.addEventListener('click', onSend);
+        cancelBtn.addEventListener('click', onCancel);
+        closeBtn.addEventListener('click', onCancel);
+        overlay.addEventListener('click', onOverlayClick);
+        input.addEventListener('keydown', onKeydown);
+        setTimeout(() => input.focus(), 100);
+      });
+    }
     function saveProgress() { if (!studentName) return; const state = { studentName: studentName, score: score, questionQueue: questionQueue, currentQuestion: currentQuestion, answered: answered, timestamp: Date.now() }; try { localStorage.setItem(STORAGE_PREFIX + studentName, JSON.stringify(state)); } catch (e) {} updateSavedSessionsList(); }
     function loadProgress(name) { try { const raw = localStorage.getItem(STORAGE_PREFIX + name); if (!raw) return null; const state = JSON.parse(raw); if (state.studentName !== name) return null; if (!Array.isArray(state.questionQueue)) return null; return state; } catch (e) { return null; } }
     function deleteProgress(name) { try { localStorage.removeItem(STORAGE_PREFIX + name); } catch (e) {} updateSavedSessionsList(); }
@@ -208,7 +421,115 @@
     function updateSavedSessionsList() { const sessions = getAllSavedSessions(); if (sessions.length === 0) { savedSessionsContainer.classList.add('hidden'); return; } savedSessionsContainer.classList.remove('hidden'); sessionTags.innerHTML = ''; sessions.forEach(session => { const tag = document.createElement('span'); tag.className = 'session-tag'; if (studentName === session.name) tag.classList.add('active'); const label = document.createElement('span'); label.textContent = `${session.name} (${session.score}分 / 剩${session.remaining}题)`; label.addEventListener('click', (e) => { e.stopPropagation(); studentNameInput.value = session.name; checkResumeAvailability(session.name); }); tag.appendChild(label); const del = document.createElement('span'); del.className = 'delete-session'; del.textContent = '✕'; del.title = '删除此进度'; del.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(`确定要删除「${session.name}」的储存进度吗？`)) { deleteProgress(session.name); if (studentName === session.name) { studentName = ''; checkResumeAvailability(""); } } }); tag.appendChild(del); tag.addEventListener('dblclick', () => { studentNameInput.value = session.name; resumeQuiz(session.name); }); sessionTags.appendChild(tag); }); }
     function checkResumeAvailability(name) { const saved = name ? loadProgress(name) : null; const canResume = Boolean(saved) && !(quizActive && studentName === name); resumeQuizBtn.disabled = !canResume; resumeQuizBtn.classList.toggle("hidden", !canResume); }
     function updateFloatingEmailButton() { if (studentName && studentName.trim()) { floatingEmailBtn.classList.remove('hidden'); } else { floatingEmailBtn.classList.add('hidden'); } }
-    function sendResultEmail(fromFloating = false) { if (isSendingEmail) { showToast('⏳ 正在寄送中，请稍候...', 'info'); return; } if (!studentName || !studentName.trim()) { showToast('⚠️ 请先输入学生姓名，才能寄送成绩。', 'info'); return; } if (typeof emailjs === 'undefined') { showToast('⚠️ EmailJS 未载入，请检查网路连线。', 'error'); return; } const remaining = getRemainingQuestions(); const totalAnswered = 100 - remaining; const percentage = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0; let status; if (quizActive) { status = '进行中 (暂停/中断)'; } else if (remaining === 0) { status = '已完成'; } else { status = '已停止 (未完成)'; } const messageBody = [`测验名：${quiz_name}`, `学生姓名：${studentName}`, '', '--- 详细进度 ---', `测验状态：${status}`, `目前得分：${score} 分`, `已答对题数：${score} 题`, `尚未完成题数：${remaining} 题`, `寄送时间：${new Date().toLocaleString('zh-TW')}`].join('\n'); const templateParams = { quiz_name: quiz_name, student_name: studentName, status: status, score: score, remaining: remaining, percentage: percentage, timestamp: new Date().toLocaleString('zh-TW'), message: messageBody }; isSendingEmail = true; const targetBtn = fromFloating ? floatingEmailBtn : sendEmailDuringQuizBtn; const originalText = targetBtn.textContent; if (fromFloating) { floatingEmailBtn.disabled = true; floatingEmailBtn.textContent = '⏳ 寄送中...'; } else { sendEmailDuringQuizBtn.classList.add('loading'); sendEmailDuringQuizBtn.disabled = true; } emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams).then(function(response) { console.log('EmailJS 成功:', response.status, response.text); showToast(`✅ 成绩已成功寄送给老师！（${studentName}）`, 'success', 4000); }).catch(function(error) { console.error('EmailJS 错误:', error); let errorMsg = '寄送失败'; if (error && error.text) { errorMsg += '：' + error.text; } else if (error && error.message) { errorMsg += '：' + error.message; } showToast(`❌ ${errorMsg}。请稍后再试。`, 'error', 5000); }).finally(function() { isSendingEmail = false; if (fromFloating) { floatingEmailBtn.disabled = false; floatingEmailBtn.textContent = originalText; } else { sendEmailDuringQuizBtn.classList.remove('loading'); sendEmailDuringQuizBtn.disabled = false; } }); }
+    
+    async function sendResultEmail(fromFloating = false) {
+      if (isSendingEmail) {
+        showToast('⏳ Sending, please wait...', 'info');
+        return;
+      }
+
+      if (!studentName || !studentName.trim()) {
+        showToast('⚠️ Please enter the student name before sending results.', 'info');
+        return;
+      }
+
+      if (typeof emailjs === 'undefined') {
+        showToast('⚠️ EmailJS failed to load. Please check your internet connection.', 'error');
+        return;
+      }
+
+      const validatedReceiverEmail = await showEmailPrompt();
+      if (!validatedReceiverEmail) {
+        showToast('已取消寄送。', 'info');
+        return;
+      }
+
+      const remaining = getRemainingQuestions();
+      const totalAnswered = TOTAL_QUESTIONS - remaining;
+      const percentage = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0;
+
+      let status;
+      if (quizActive) {
+        status = '进行中 (暂停/中断)';
+      } else if (remaining === 0) {
+        status = '已完成';
+      } else {
+        status = '已停止 (未完成)';
+      }
+
+      const statusEn = quizActive ? 'IN PROGRESS (Paused)' : (remaining === 0 ? 'COMPLETED' : 'STOPPED (Incomplete)');
+      const pad = (label) => label + ' '.repeat(Math.max(1, 18 - label.length));
+      const messageBody = [
+        'STUDENT QUIZ RESULT REPORT',
+        '==========================================',
+        '',
+        pad('Quiz Name') + ': ' + quiz_name,
+        pad('Student Name') + ': ' + studentName,
+        pad('Status') + ': ' + statusEn,
+        pad('Score') + ': ' + score + ' / ' + TOTAL_QUESTIONS,
+        pad('Correct Answers') + ': ' + score,
+        pad('Questions Remaining') + ': ' + remaining,
+        pad('Report Sent At') + ': ' + new Date().toLocaleString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }),
+        '',
+        '------------------------------------------',
+        'This report was generated automatically by',
+        'the Chinese Pinyin Quiz application.',
+        '==========================================',
+      ].join('\n');
+
+      const templateParams = {
+        to_email: validatedReceiverEmail,
+        quiz_name: quiz_name,
+        student_name: studentName,
+        status: status,
+        score: score,
+        remaining: remaining,
+        percentage: percentage,
+        timestamp: new Date().toLocaleString('zh-TW'),
+        message: messageBody,
+      };
+
+      isSendingEmail = true;
+      const targetBtn = fromFloating ? floatingEmailBtn : sendEmailDuringQuizBtn;
+      const originalText = targetBtn.textContent;
+      if (fromFloating) {
+        floatingEmailBtn.disabled = true;
+        floatingEmailBtn.textContent = '⏳ 寄送中...';
+      } else {
+        sendEmailDuringQuizBtn.classList.add('loading');
+        sendEmailDuringQuizBtn.disabled = true;
+      }
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function(response) {
+          console.log('EmailJS 成功:', response.status, response.text);
+          showToast(`✅ Results sent successfully! (${studentName})`, 'success', 4000);
+        })
+        .catch(function(error) {
+          console.error('EmailJS 错误:', error);
+          let errorMsg = '寄送失败';
+          if (error && error.text) {
+            errorMsg += '：' + error.text;
+          } else if (error && error.message) {
+            errorMsg += '：' + error.message;
+          }
+          showToast(`❌ ${errorMsg}. Please try again later.`, 'error', 5000);
+        })
+        .finally(function() {
+          isSendingEmail = false;
+          if (fromFloating) {
+            floatingEmailBtn.disabled = false;
+            floatingEmailBtn.textContent = originalText;
+          } else {
+            sendEmailDuringQuizBtn.classList.remove('loading');
+            sendEmailDuringQuizBtn.disabled = false;
+          }
+        });
+    }
+
     function resetToSetup() { quizPanel.classList.add('hidden'); emailPanel.classList.add('hidden'); setupPanel.classList.remove('hidden'); quizActive = false; answered = false; currentQuestion = null; questionQueue = []; score = 0; resumeBadge.classList.add('hidden'); updateScoreAndProgress(); feedbackMessage.innerHTML = '<span>✨ 选一个拼音吧</span>'; feedbackMessage.className = 'feedback-area'; currentCharDisplay.textContent = '一'; optionsContainer.innerHTML = ''; nextBtn.disabled = true; updateSavedSessionsList(); checkResumeAvailability(studentNameInput.value.trim()); updateFloatingEmailButton(); }
     function getRemainingQuestions(scoreValue = score) { return Math.max(0, TOTAL_QUESTIONS - scoreValue); }
     function updateScoreAndProgress() { scoreDisplay.textContent = `得分：${score}`; const remaining = getRemainingQuestions(); progressDisplay.textContent = `剩余：${remaining} 题`; }

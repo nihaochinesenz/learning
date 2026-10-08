@@ -13,7 +13,147 @@
     .level-title { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 18px; } .level-title span { color: #69768e; font-size: .78rem; letter-spacing: .08em; } h2 { margin: 3px 0 0; font-size: 1.55rem; } .level-title b { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, white); border-radius: 999px; padding: 7px 12px; font-size: .85rem; white-space: nowrap; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; } .grid a { border: 1px solid #e0e6ef; border-radius: 15px; color: inherit; display: flex; flex-direction: column; min-height: 120px; padding: 16px; text-decoration: none; transition: .15s ease; } .grid a:hover, .grid a:focus-visible { border-color: var(--accent); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 18%, transparent); transform: translateY(-3px); outline: none; } .grid strong { font-size: 1.05rem; } .grid em { color: var(--accent); font-size: .9rem; font-style: normal; margin-top: 7px; } .grid small { color: #68758d; margin-top: auto; padding-top: 16px; }
     footer { color: #69768e; font-size: .88rem; margin-top: 28px; text-align: center; } @media (max-width: 560px) { main { width: min(100% - 24px, 1080px); padding-top: 28px; } .level { padding: 18px; } .level-title { flex-direction: column; } }
-  </style>
+  
+
+    /* ---------- Professional Email Modal ---------- */
+    .email-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 26, 43, 0.55);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 20px;
+    }
+
+    .email-modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .email-modal {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 36px 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 60px rgba(0, 15, 30, 0.25);
+      position: relative;
+      transform: translateY(16px) scale(0.97);
+      transition: transform 0.25s ease;
+    }
+
+    .email-modal-overlay.show .email-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .email-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .email-modal-close:hover {
+      background: #e2e8f0;
+      color: #1e2a3e;
+    }
+
+    .email-modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #dbeafe, #eef4ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    .email-modal-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f1a2b;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .email-modal-subtitle {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .email-modal-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #ccd9f0;
+      border-radius: 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+      background: #f8fafc;
+    }
+
+    .email-modal-input:focus {
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .email-modal-input.input-error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .email-modal-error {
+      min-height: 20px;
+      font-size: 0.85rem;
+      color: #dc2626;
+      margin-top: 8px;
+    }
+
+    .email-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .email-modal-actions .btn {
+      margin: 0;
+      padding: 10px 26px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      .email-modal {
+        padding: 28px 22px 22px;
+      }
+      .email-modal-actions .btn {
+        flex: 1;
+      }
+    }
+
+</style>
 </head>
 <body>
   <main>
