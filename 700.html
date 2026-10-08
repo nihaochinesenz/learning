@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼音测验100字</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', 'Noto Sans', 'Helvetica Neue', sans-serif; background: #f2f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+    .app { max-width: 880px; width: 100%; background: white; border-radius: 32px; box-shadow: 0 20px 40px rgba(0, 15, 30, 0.1); padding: 32px 28px; transition: all 0.2s; }
+    h1 { font-size: 2rem; font-weight: 600; color: #1e2a3e; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    h1 span { background: #d0e2ff; font-size: 1rem; padding: 6px 14px; border-radius: 40px; color: #1e3a8a; font-weight: 500; }
+    .teacher-note { color: #4b5e7a; font-size: 0.95rem; margin-bottom: 24px; border-left: 4px solid #3b82f6; padding-left: 16px; background: #f8fafc; border-radius: 0 12px 12px 0; line-height: 1.4; }
+    .name-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 16px; background: #f0f4fe; padding: 16px 20px; border-radius: 50px; }
+    .name-row label { font-weight: 600; color: #1e2a3e; font-size: 1.05rem; }
+    .name-row input { flex: 1; min-width: 180px; padding: 12px 20px; border: 2px solid #ccd9f0; border-radius: 40px; font-size: 1rem; outline: none; transition: 0.2s; background: white; }
+    .name-row input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+    .stats-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; font-weight: 500; color: #1e2a3e; }
+    .score-badge { background: #1e2a3e; color: white; padding: 6px 20px; border-radius: 40px; font-size: 1.1rem; font-weight: 600; }
+    .char-display { text-align: center; margin: 16px 0 24px; font-size: 9rem; line-height: 1.2; font-weight: 500; color: #0a1a2f; text-shadow: 0 2px 10px rgba(0,0,0,0.02); user-select: none; letter-spacing: 4px; word-break: break-word; }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 16px; }
+    .option-btn { background: #ffffff; border: 2px solid #dbe3f0; border-radius: 60px; padding: 18px 8px; font-size: 2rem; font-weight: 500; color: #1e2a3e; cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; letter-spacing: 4px; font-family: 'Noto Sans', 'Segoe UI', sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.02); text-align: center; word-break: break-word; }
+    .option-btn:hover:not(:disabled) { background: #ecf2fe; border-color: #3b82f6; transform: scale(1.01); }
+    .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+    .option-btn.correct-guess { background: #d1fae5; border-color: #10b981; color: #065f46; box-shadow: 0 0 0 4px #a7f3d0; }
+    .option-btn.wrong-guess { background: #fee2e2; border-color: #ef4444; color: #991b1b; text-decoration: line-through 2px #ef4444; }
+    .option-btn.reveal-correct { background: #d1fae5; border-color: #10b981; color: #065f46; font-weight: 700; }
+    .feedback-area { min-height: 70px; margin: 12px 0 16px; padding: 12px 20px; border-radius: 20px; font-size: 1.1rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: #f8fafc; }
+    .feedback-correct { color: #065f46; background: #e6f7ec; }
+    .feedback-wrong { color: #991b1b; background: #fee2e2; }
+    .feedback-icon { font-size: 1.6rem; }
+    .action-buttons { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin: 16px; }
+    .btn { padding: 8px 40px; margin: 8px 0px; border-radius: 60px; font-weight: 600; font-size: 0.6rem; border: none; cursor: pointer; transition: 0.15s; background: white; border: 2px solid #cbd5e1; color: #1e2a3e; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary { background: #1e2a3e; border: 2px solid #1e2a3e; color: white; }
+    .btn-primary:hover:not(:disabled) { background: #0f1a2b; border-color: #0f1a2b; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { background: #f1f5f9; border-color: #cbd5e1; }
+    .btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
+    .btn-success { background: #10b981; border-color: #10b981; color: white; }
+    .btn-success:hover:not(:disabled) { background: #059669; border-color: #059669; }
+    .btn-email { background: #eef4ff; border-color: #b9d0f0; color: #1e3a8a; }
+    .btn-email:hover:not(:disabled) { background: #dfeaff; border-color: #93b4e6; }
+    .btn-email.loading { position: relative; color: transparent; }
+    .btn-email.loading::after { content: ''; position: absolute; width: 18px; height: 18px; border: 3px solid #1e3a8a; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+    .email-section { margin-top: 24px; padding-top: 20px; border-top: 2px dashed #d9e2ef; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+    .email-section .btn { background: #eef4ff; border-color: #b9d0f0; }
+    .email-section .btn:hover:not(:disabled) { background: #dfeaff; }
+    .footer { margin-top: 24px; font-size: 0.8rem; text-align: center; color: #7e8b9f; }
+    .timer { font-size: 0.95rem; color: #1e3a8a; background: #e8f0fe; padding: 6px 16px; border-radius: 30px; }
+    .resume-badge { background: #fef3c7; color: #92400e; padding: 8px 16px; border-radius: 40px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+    .button-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .saved-sessions { margin-top: 16px; background: #f8fafc; border-radius: 16px; padding: 12px 16px; border: 1px solid #e2e8f0; }
+    .saved-sessions-title { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; font-weight: 500; }
+    .session-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .session-tag { background: white; border: 1px solid #cbd5e1; border-radius: 40px; padding: 6px 14px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+    .session-tag:hover { background: #eef4ff; border-color: #3b82f6; }
+    .session-tag.active { background: #1e2a3e; color: white; border-color: #1e2a3e; }
+    .session-tag .delete-session { font-size: 0.9rem; opacity: 0.6; margin-left: 4px; }
+    .session-tag .delete-session:hover { opacity: 1; color: #ef4444; }
+    .floating-email-btn { position: fixed; bottom: 28px; right: 28px; background: #3b82f6; color: white; border: none; border-radius: 60px; padding: 14px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35); display: flex; align-items: center; gap: 10px; transition: all 0.2s; z-index: 1000; border: 2px solid #2563eb; }
+    .floating-email-btn:hover:not(:disabled) { background: #2563eb; transform: translateY(-2px); box-shadow: 0 12px 24px rgba(59, 130, 246, 0.45); }
+    .floating-email-btn:active { transform: translateY(0); }
+    .floating-email-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .floating-email-btn.hidden { display: none !important; }
+    .floating-email-btn.loading { pointer-events: none; }
+    .sound-toggle { position: fixed; top: 20px; right: 20px; background: white; border: 2px solid #cbd5e1; border-radius: 50px; width: 50px; height: 50px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .sound-toggle:hover { background: #f1f5f9; transform: scale(1.05); }
+    .sound-toggle.muted { opacity: 0.6; background: #f1f5f9; }
+    .toast { position: fixed; bottom: 100px; right: 28px; background: #1e2a3e; color: white; padding: 14px 24px; border-radius: 16px; font-size: 0.95rem; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 1001; opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; max-width: 320px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: #065f46; }
+    .toast.info { background: #1e3a8a; }
+    .toast.error { background: #991b1b; }
+    @media (max-width: 600px) { .app { padding: 20px 16px; } .char-display { font-size: 6rem; } .option-btn { font-size: 1.5rem; } .floating-email-btn { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 0.9rem; } .toast { bottom: 80px; right: 16px; left: 16px; max-width: none; } .sound-toggle { top: 12px; right: 12px; width: 42px; height: 42px; font-size: 1.2rem; } }
+  
+    .notice-modal-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 20px; background: rgba(15, 26, 43, .55); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    .notice-modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .notice-modal { width: min(100%, 390px); padding: 30px; border-radius: 22px; background: #fff; box-shadow: 0 24px 64px rgba(15, 26, 43, .24); text-align: center; transform: translateY(14px) scale(.97); transition: transform .2s ease; }
+    .notice-modal-overlay.show .notice-modal { transform: translateY(0) scale(1); }
+    .notice-modal-icon { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 16px; border-radius: 18px; background: #eaf1ff; color: #285fc0; font-size: 1.7rem; }
+    .notice-modal h2 { margin: 0; color: #172033; font-size: 1.3rem; }
+    .notice-modal p { margin: 10px 0 22px; color: #61708a; line-height: 1.6; }
+    .notice-modal .btn { min-width: 132px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <h1>汉字测验 <span id="quizNameLabel"></span></h1>
+  <div class="teacher-note">✦ 看汉字 · 选拼音 · 答错会再出现 · 可随时暂停与恢复进度 · 随时寄送成绩</div>
+  <div id="setupPanel">
+    <div class="name-row"><label for="studentName">👤 学生姓名：</label><input type="text" id="studentName" placeholder="请输入姓名" value=""></div>
+    <div class="button-group"><button class="btn btn-primary" id="startQuizBtn">🚀 开始新测验</button><button class="btn btn-success hidden" id="resumeQuizBtn" disabled>▶️ 恢复上次进度</button></div>
+    <div class="saved-sessions" id="savedSessionsContainer"><div class="saved-sessions-title">📋 已储存的进度</div><div class="session-tags" id="sessionTags"></div></div>
+  </div>
+  <div id="quizPanel" class="hidden">
+    <div class="feedback-area" id="feedbackMessage"><span>✨ 选一个拼音吧</span></div>
+    <div class="stats-bar"><div class="score-badge" id="scoreDisplay">得分：0</div><div class="timer" id="progressDisplay">剩余：100 题</div><div class="resume-badge hidden" id="resumeBadge">💾 已恢复进度</div></div>
+    <div class="char-display" id="currentCharDisplay">一</div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="action-buttons"><button class="btn btn-primary" id="nextBtn" disabled style="background-color: green;font-size:120%;width:100%">下一题 →</button><button class="btn btn-secondary" id="stopQuizBtn">⏹️ 停止测验</button><button class="btn btn-email" id="sendEmailDuringQuizBtn">📧 寄送成绩</button></div>
+  </div>
+  <div id="emailPanel" class="email-section hidden">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;"><button class="btn" id="sendEmailBtn">📧 寄送成绩给老师</button><button class="btn btn-primary" id="restartBtn">🔄 重新测验</button></div>
+    <div style="font-size: 0.9rem; color: #4a5e7a;" id="emailHint"></div>
+  </div>
+  <div class="footer">⚡ 答错的汉字会自动加入后面题库，直到答对为止 · 进度自动储存 · 随时可寄送成绩</div>
+</div>
+<button class="floating-email-btn hidden" id="floatingEmailBtn" title="寄送成绩给老师">📧 寄送成绩</button>
+<button class="sound-toggle" id="soundToggle" title="切换音效">🔊</button>
+<div class="toast" id="toast"></div>
+
+<div class="notice-modal-overlay" id="noticeModalOverlay" aria-hidden="true">
+  <section class="notice-modal" role="alertdialog" aria-modal="true" aria-labelledby="noticeModalTitle" aria-describedby="noticeModalMessage">
+    <div class="notice-modal-icon" aria-hidden="true">💡</div>
+    <h2 id="noticeModalTitle">提示</h2><p id="noticeModalMessage"></p>
+    <button class="btn btn-primary" id="noticeModalClose" type="button">我知道了</button>
+  </section>
+</div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  (function() {
+    const EMAILJS_PUBLIC_KEY = 'n-DWu6kPsXnwUz8Ug';
+    const EMAILJS_SERVICE_ID = 'service_i0nwfwi';
+    const EMAILJS_TEMPLATE_ID = 'template_4d1w3fg';
+    if (typeof emailjs !== 'undefined') { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+    const quiz_name = '700';
+    const CHARACTERS = [
+      { char: '光', pinyin: 'guāng' }, { char: '暗', pinyin: 'àn' }, { char: '影', pinyin: 'yǐng' }, { char: '彩', pinyin: 'cǎi' }, { char: '虹', pinyin: 'hóng' },
+      { char: '骨', pinyin: 'gǔ' }, { char: '肉', pinyin: 'ròu' }, { char: '羽', pinyin: 'yǔ' }, { char: '翅', pinyin: 'chì' }, { char: '恨', pinyin: 'hèn' },
+      { char: '怒', pinyin: 'nù' }, { char: '悲', pinyin: 'bēi' }, { char: '伤', pinyin: 'shāng' }, { char: '痛', pinyin: 'tòng' }, { char: '乐', pinyin: 'lè' },
+      { char: '忧', pinyin: 'yōu' }, { char: '愁', pinyin: 'chóu' }, { char: '烦', pinyin: 'fán' }, { char: '恼', pinyin: 'nǎo' }, { char: '怕', pinyin: 'pà' },
+      { char: '惊', pinyin: 'jīng' }, { char: '慌', pinyin: 'huāng' }, { char: '急', pinyin: 'jí' }, { char: '忙', pinyin: 'máng' }, { char: '闲', pinyin: 'xián' },
+      { char: '累', pinyin: 'lèi' }, { char: '饿', pinyin: 'è' }, { char: '渴', pinyin: 'kě' }, { char: '饱', pinyin: 'bǎo' }, { char: '醉', pinyin: 'zuì' },
+      { char: '醒', pinyin: 'xǐng' }, { char: '病', pinyin: 'bìng' }, { char: '疼', pinyin: 'téng' }, { char: '痒', pinyin: 'yǎng' }, { char: '药', pinyin: 'yào' },
+      { char: '医', pinyin: 'yī' }, { char: '院', pinyin: 'yuàn' }, { char: '护', pinyin: 'hù' }, { char: '士', pinyin: 'shì' }, { char: '健', pinyin: 'jiàn' },
+      { char: '康', pinyin: 'kāng' }, { char: '安', pinyin: 'ān' }, { char: '危', pinyin: 'wēi' }, { char: '险', pinyin: 'xiǎn' }, { char: '救', pinyin: 'jiù' },
+      { char: '助', pinyin: 'zhù' }, { char: '帮', pinyin: 'bāng' }, { char: '守', pinyin: 'shǒu' }, { char: '攻', pinyin: 'gōng' }, { char: '打', pinyin: 'dǎ' },
+      { char: '杀', pinyin: 'shā' }, { char: '战', pinyin: 'zhàn' }, { char: '争', pinyin: 'zhēng' }, { char: '斗', pinyin: 'dòu' }, { char: '胜', pinyin: 'shèng' },
+      { char: '败', pinyin: 'bài' }, { char: '赢', pinyin: 'yíng' }, { char: '输', pinyin: 'shū' }, { char: '善', pinyin: 'shàn' }, { char: '恶', pinyin: 'è' },
+      { char: '仁', pinyin: 'rén' }, { char: '义', pinyin: 'yì' }, { char: '礼', pinyin: 'lǐ' }, { char: '智', pinyin: 'zhì' }, { char: '信', pinyin: 'xìn' },
+      { char: '忠', pinyin: 'zhōng' }, { char: '孝', pinyin: 'xiào' }, { char: '廉', pinyin: 'lián' }, { char: '耻', pinyin: 'chǐ' }, { char: '勇', pinyin: 'yǒng' },
+      { char: '敢', pinyin: 'gǎn' }, { char: '忍', pinyin: 'rěn' }, { char: '耐', pinyin: 'nài' }, { char: '恒', pinyin: 'héng' }, { char: '毅', pinyin: 'yì' },
+      { char: '坚', pinyin: 'jiān' }, { char: '持', pinyin: 'chí' }, { char: '努', pinyin: 'nǔ' }, { char: '认', pinyin: 'rèn' }, { char: '专', pinyin: 'zhuān' },
+      { char: '细', pinyin: 'xì' }, { char: '粗', pinyin: 'cū' }, { char: '严', pinyin: 'yán' }, { char: '格', pinyin: 'gé' }, { char: '温', pinyin: 'wēn' },
+      { char: '柔', pinyin: 'róu' }, { char: '刚', pinyin: 'gāng' }, { char: '烈', pinyin: 'liè' }, { char: '猛', pinyin: 'měng' }, { char: '暴', pinyin: 'bào' },
+      { char: '躁', pinyin: 'zào' }, { char: '静', pinyin: 'jìng' }, { char: '吵', pinyin: 'chǎo' }, { char: '闹', pinyin: 'nào' }, { char: '宁', pinyin: 'níng' },
+      { char: '乱', pinyin: 'luàn' }, { char: '整', pinyin: 'zhěng' }, { char: '齐', pinyin: 'qí' }, { char: '清', pinyin: 'qīng' }, { char: '洁', pinyin: 'jié' }
+    ];
+    const STORAGE_PREFIX = `quiz${quiz_name}_`;
+    document.getElementById("quizNameLabel").textContent = quiz_name;
+    const setupPanel = document.getElementById('setupPanel');
+    const quizPanel = document.getElementById('quizPanel');
+    const emailPanel = document.getElementById('emailPanel');
+    const studentNameInput = document.getElementById('studentName');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const resumeQuizBtn = document.getElementById('resumeQuizBtn');
+    const stopQuizBtn = document.getElementById('stopQuizBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const sendEmailBtn = document.getElementById('sendEmailBtn');
+    const sendEmailDuringQuizBtn = document.getElementById('sendEmailDuringQuizBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const sessionTags = document.getElementById('sessionTags');
+    const savedSessionsContainer = document.getElementById('savedSessionsContainer');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const currentCharDisplay = document.getElementById('currentCharDisplay');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+    const emailHint = document.getElementById('emailHint');
+    const resumeBadge = document.getElementById('resumeBadge');
+    const floatingEmailBtn = document.getElementById('floatingEmailBtn');
+    const toast = document.getElementById('toast');
+    const soundToggle = document.getElementById('soundToggle');
+    const noticeModalOverlay = document.getElementById('noticeModalOverlay');
+    const noticeModalTitle = document.getElementById('noticeModalTitle');
+    const noticeModalMessage = document.getElementById('noticeModalMessage');
+    const noticeModalClose = document.getElementById('noticeModalClose');
+    function closeNotice() { noticeModalOverlay.classList.remove('show'); noticeModalOverlay.setAttribute('aria-hidden', 'true'); }
+    function showNotice(message, title = '提示') { noticeModalTitle.textContent = title; noticeModalMessage.textContent = message; noticeModalOverlay.classList.add('show'); noticeModalOverlay.setAttribute('aria-hidden', 'false'); noticeModalClose.focus(); }
+    noticeModalClose.addEventListener('click', closeNotice);
+    noticeModalOverlay.addEventListener('click', event => { if (event.target === noticeModalOverlay) closeNotice(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && noticeModalOverlay.classList.contains('show')) closeNotice(); });
+
+    const TOTAL_QUESTIONS = CHARACTERS.length;
+    let studentName = '';
+    let score = 0;
+    let questionQueue = [];
+    let currentQuestion = null;
+    let answered = false;
+    let quizActive = false;
+    let optionButtons = [];
+    let soundEnabled = true;
+    let isSendingEmail = false;
+    let audioContext = null;
+    function getAudioContext() { if (!audioContext) { try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } } if (audioContext && audioContext.state === 'suspended') { audioContext.resume(); } return audioContext; }
+    function playCheerfulSound() { if (!soundEnabled) return; const ctx = getAudioContext(); if (!ctx) return; const now = ctx.currentTime; const notes = [{ freq: 523.25, start: 0.00, dur: 0.12 }, { freq: 659.25, start: 0.10, dur: 0.12 }, { freq: 783.99, start: 0.20, dur: 0.12 }, { freq: 1046.50, start: 0.30, dur: 0.25 }]; notes.forEach(note => { const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(note.freq, now + note.start); gain.gain.setValueAtTime(0, now + note.start); gain.gain.linearRampToValueAtTime(0.25, now + note.start + 0.02); gain.gain.exponentialRampToValueAtTime(0.001, now + note.start + note.dur); osc.connect(gain); gain.connect(ctx.destination); osc.start(now + note.start); osc.stop(now + note.start + note.dur + 0.05); }); }
+    function playSadSound() { if (!soundEnabled) return; const ctx = getAudioContext(); if (!ctx) return; const now = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(180, now + 0.18); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.75, now + 0.02); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22); osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now + 0.25); }
+    function updateSoundToggleUI() { if (soundEnabled) { soundToggle.textContent = '🔊'; soundToggle.classList.remove('muted'); soundToggle.title = '音效开启 (点击静音)'; } else { soundToggle.textContent = '🔇'; soundToggle.classList.add('muted'); soundToggle.title = '音效关闭 (点击开启)'; } }
+    soundToggle.addEventListener('click', () => { soundEnabled = !soundEnabled; updateSoundToggleUI(); if (soundEnabled) { const ctx = getAudioContext(); if (ctx) { const now = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(880, now); gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now + 0.2); } } });
+    let toastTimeout = null;
+    function showToast(message, type = 'info', duration = 3500) { if (toastTimeout) clearTimeout(toastTimeout); toast.textContent = message; toast.className = 'toast show ' + type; toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, duration); }
+    function saveProgress() { if (!studentName) return; const state = { studentName: studentName, score: score, questionQueue: questionQueue, currentQuestion: currentQuestion, answered: answered, timestamp: Date.now() }; try { localStorage.setItem(STORAGE_PREFIX + studentName, JSON.stringify(state)); } catch (e) {} updateSavedSessionsList(); }
+    function loadProgress(name) { try { const raw = localStorage.getItem(STORAGE_PREFIX + name); if (!raw) return null; const state = JSON.parse(raw); if (state.studentName !== name) return null; if (!Array.isArray(state.questionQueue)) return null; return state; } catch (e) { return null; } }
+    function deleteProgress(name) { try { localStorage.removeItem(STORAGE_PREFIX + name); } catch (e) {} updateSavedSessionsList(); }
+    function getAllSavedSessions() { const sessions = []; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key && key.startsWith(STORAGE_PREFIX)) { const name = key.slice(STORAGE_PREFIX.length); try { const raw = localStorage.getItem(key); if (raw) { const state = JSON.parse(raw); sessions.push({ name: name, score: state.score || 0, remaining: getRemainingQuestions(state.score || 0), timestamp: state.timestamp || 0 }); } } catch (e) {} } } sessions.sort((a, b) => b.timestamp - a.timestamp); return sessions; }
+    function updateSavedSessionsList() { const sessions = getAllSavedSessions(); if (sessions.length === 0) { savedSessionsContainer.classList.add('hidden'); return; } savedSessionsContainer.classList.remove('hidden'); sessionTags.innerHTML = ''; sessions.forEach(session => { const tag = document.createElement('span'); tag.className = 'session-tag'; if (studentName === session.name) tag.classList.add('active'); const label = document.createElement('span'); label.textContent = `${session.name} (${session.score}分 / 剩${session.remaining}题)`; label.addEventListener('click', (e) => { e.stopPropagation(); studentNameInput.value = session.name; checkResumeAvailability(session.name); }); tag.appendChild(label); const del = document.createElement('span'); del.className = 'delete-session'; del.textContent = '✕'; del.title = '删除此进度'; del.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(`确定要删除「${session.name}」的储存进度吗？`)) { deleteProgress(session.name); if (studentName === session.name) { studentName = ''; checkResumeAvailability(""); } } }); tag.appendChild(del); tag.addEventListener('dblclick', () => { studentNameInput.value = session.name; resumeQuiz(session.name); }); sessionTags.appendChild(tag); }); }
+    function checkResumeAvailability(name) { const saved = name ? loadProgress(name) : null; const canResume = Boolean(saved) && !(quizActive && studentName === name); resumeQuizBtn.disabled = !canResume; resumeQuizBtn.classList.toggle("hidden", !canResume); }
+    function updateFloatingEmailButton() { if (studentName && studentName.trim()) { floatingEmailBtn.classList.remove('hidden'); } else { floatingEmailBtn.classList.add('hidden'); } }
+    function sendResultEmail(fromFloating = false) { if (isSendingEmail) { showToast('⏳ 正在寄送中，请稍候...', 'info'); return; } if (!studentName || !studentName.trim()) { showToast('⚠️ 请先输入学生姓名，才能寄送成绩。', 'info'); return; } if (typeof emailjs === 'undefined') { showToast('⚠️ EmailJS 未载入，请检查网路连线。', 'error'); return; } const remaining = getRemainingQuestions(); const totalAnswered = 100 - remaining; const percentage = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0; let status; if (quizActive) { status = '进行中 (暂停/中断)'; } else if (remaining === 0) { status = '已完成'; } else { status = '已停止 (未完成)'; } const messageBody = [`测验名：${quiz_name}`, `学生姓名：${studentName}`, '', '--- 详细进度 ---', `测验状态：${status}`, `目前得分：${score} 分`, `已答对题数：${score} 题`, `尚未完成题数：${remaining} 题`, `寄送时间：${new Date().toLocaleString('zh-TW')}`].join('\n'); const templateParams = { quiz_name: quiz_name, student_name: studentName, status: status, score: score, remaining: remaining, percentage: percentage, timestamp: new Date().toLocaleString('zh-TW'), message: messageBody }; isSendingEmail = true; const targetBtn = fromFloating ? floatingEmailBtn : sendEmailDuringQuizBtn; const originalText = targetBtn.textContent; if (fromFloating) { floatingEmailBtn.disabled = true; floatingEmailBtn.textContent = '⏳ 寄送中...'; } else { sendEmailDuringQuizBtn.classList.add('loading'); sendEmailDuringQuizBtn.disabled = true; } emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams).then(function(response) { console.log('EmailJS 成功:', response.status, response.text); showToast(`✅ 成绩已成功寄送给老师！（${studentName}）`, 'success', 4000); }).catch(function(error) { console.error('EmailJS 错误:', error); let errorMsg = '寄送失败'; if (error && error.text) { errorMsg += '：' + error.text; } else if (error && error.message) { errorMsg += '：' + error.message; } showToast(`❌ ${errorMsg}。请稍后再试。`, 'error', 5000); }).finally(function() { isSendingEmail = false; if (fromFloating) { floatingEmailBtn.disabled = false; floatingEmailBtn.textContent = originalText; } else { sendEmailDuringQuizBtn.classList.remove('loading'); sendEmailDuringQuizBtn.disabled = false; } }); }
+    function resetToSetup() { quizPanel.classList.add('hidden'); emailPanel.classList.add('hidden'); setupPanel.classList.remove('hidden'); quizActive = false; answered = false; currentQuestion = null; questionQueue = []; score = 0; resumeBadge.classList.add('hidden'); updateScoreAndProgress(); feedbackMessage.innerHTML = '<span>✨ 选一个拼音吧</span>'; feedbackMessage.className = 'feedback-area'; currentCharDisplay.textContent = '一'; optionsContainer.innerHTML = ''; nextBtn.disabled = true; updateSavedSessionsList(); checkResumeAvailability(studentNameInput.value.trim()); updateFloatingEmailButton(); }
+    function getRemainingQuestions(scoreValue = score) { return Math.max(0, TOTAL_QUESTIONS - scoreValue); }
+    function updateScoreAndProgress() { scoreDisplay.textContent = `得分：${score}`; const remaining = getRemainingQuestions(); progressDisplay.textContent = `剩余：${remaining} 题`; }
+    function startNewQuiz() { const name = studentNameInput.value.trim(); if (!name) { showNotice('请输入姓名后再开始测验。'); return; } const existing = loadProgress(name); if (existing) { if (!confirm(`「${name}」已有储存的进度（得分 ${existing.score}，剩余 ${getRemainingQuestions(existing.score || 0)} 题）。\n\n按「确定」会开始新测验并覆盖旧进度。\n按「取消」则载入旧进度。`)) { resumeQuiz(name); return; } deleteProgress(name); } studentName = name; score = 0; answered = false; currentQuestion = null; let fullPool = CHARACTERS.map(item => ({ ...item })); for (let i = fullPool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [fullPool[i], fullPool[j]] = [fullPool[j], fullPool[i]]; } questionQueue = fullPool; quizActive = true; resumeBadge.classList.add('hidden'); setupPanel.classList.add('hidden'); quizPanel.classList.remove('hidden'); emailPanel.classList.add('hidden'); loadNextQuestion(); updateScoreAndProgress(); saveProgress(); updateFloatingEmailButton(); }
+    function resumeQuiz(name) { const state = loadProgress(name); if (!state) { showNotice('找不到此学生的储存进度。', '无法恢复进度'); return; } studentName = state.studentName; score = state.score || 0; questionQueue = state.questionQueue || []; currentQuestion = state.currentQuestion || null; answered = state.answered || false; if (currentQuestion && (!currentQuestion.char || !currentQuestion.pinyin)) { currentQuestion = null; } if (questionQueue.length === 0 && !currentQuestion) { if (confirm('此进度已完成所有题目，是否查看成绩？')) { studentNameInput.value = studentName; finishQuiz(true); } return; } quizActive = true; resumeBadge.classList.remove('hidden'); setupPanel.classList.add('hidden'); quizPanel.classList.remove('hidden'); emailPanel.classList.add('hidden'); if (currentQuestion && answered) { renderCurrentQuestion(true); } else if (currentQuestion && !answered) { renderCurrentQuestion(false); } else if (questionQueue.length > 0) { loadNextQuestion(); } updateScoreAndProgress(); updateFloatingEmailButton(); }
+    function renderCurrentQuestion(alreadyAnswered) { if (!currentQuestion) return; currentCharDisplay.textContent = currentQuestion.char; optionsContainer.innerHTML = ''; feedbackMessage.innerHTML = ''; nextBtn.disabled = !alreadyAnswered; const correctPinyin = currentQuestion.pinyin; const distractorPool = CHARACTERS.map(item => item.pinyin).filter(z => z !== correctPinyin); const uniqueDistractors = [...new Set(distractorPool)]; const shuffled = [...uniqueDistractors].sort(() => Math.random() - 0.5); const selectedDistractors = shuffled.slice(0, 3); while (selectedDistractors.length < 3) { selectedDistractors.push('bā'); } const options = [correctPinyin, ...selectedDistractors]; for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; } optionButtons = []; options.forEach((pinyin) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.textContent = pinyin; btn.dataset.pinyin = pinyin; btn.addEventListener('click', () => onOptionClick(pinyin)); optionsContainer.appendChild(btn); optionButtons.push(btn); }); if (alreadyAnswered) { optionButtons.forEach(btn => { btn.disabled = true; if (btn.dataset.pinyin === correctPinyin) { btn.classList.add('reveal-correct'); } }); feedbackMessage.innerHTML = `<span class="feedback-icon">⏸️</span> 此题已作答，正确读音是 ${correctPinyin}。请按「下一题」继续。`; feedbackMessage.className = 'feedback-area'; nextBtn.disabled = false; } else { feedbackMessage.innerHTML = '<span>✨ 选一个拼音吧</span>'; feedbackMessage.className = 'feedback-area'; } }
+    function loadNextQuestion() { if (!quizActive) return; optionsContainer.innerHTML = ''; feedbackMessage.innerHTML = '<span>✨ 选一个拼音吧</span>'; feedbackMessage.className = 'feedback-area'; nextBtn.disabled = true; answered = false; if (questionQueue.length === 0) { currentQuestion = null; finishQuiz(true); return; } currentQuestion = questionQueue.shift(); renderCurrentQuestion(false); updateScoreAndProgress(); saveProgress(); }
+    function onOptionClick(selectedPinyin) { if (!quizActive || answered || !currentQuestion) return; answered = true; const correctPinyin = currentQuestion.pinyin; const isCorrect = (selectedPinyin === correctPinyin); optionButtons.forEach(btn => { btn.disabled = true; if (btn.dataset.pinyin === correctPinyin) { btn.classList.add('reveal-correct'); } }); optionButtons.forEach(btn => { if (btn.dataset.pinyin === selectedPinyin) { if (isCorrect) { btn.classList.add('correct-guess'); } else { btn.classList.add('wrong-guess'); } } }); if (isCorrect) { playCheerfulSound(); score++; feedbackMessage.innerHTML = `<span class="feedback-icon">✅</span> 正确！「${currentQuestion.char}」读作 ${correctPinyin}`; feedbackMessage.className = 'feedback-area feedback-correct'; } else { playSadSound(); feedbackMessage.innerHTML = `<span class="feedback-icon">❌</span> 不对哦～「${currentQuestion.char}」正确读音是 ${correctPinyin}。此字会再出现。`; feedbackMessage.className = 'feedback-area feedback-wrong'; if (currentQuestion) { questionQueue.push({ ...currentQuestion }); } } updateScoreAndProgress(); nextBtn.disabled = false; saveProgress(); }
+    function goToNextQuestion() { if (!quizActive) return; if (!answered) return; currentQuestion = null; if (questionQueue.length === 0) { finishQuiz(true); return; } loadNextQuestion(); }
+    function finishQuiz(completed = false) { quizActive = false; quizPanel.classList.add('hidden'); emailPanel.classList.remove('hidden'); setupPanel.classList.add('hidden'); const remaining = getRemainingQuestions(); emailHint.innerHTML = completed ? `🎉 测验完成！得分：${score} / ${TOTAL_QUESTIONS} (剩余未答：${remaining})` : `⏸️ 测验已停止。得分：${score}，尚未完成的题数：${remaining}`; if (completed) { deleteProgress(studentName); } updateSavedSessionsList(); updateFloatingEmailButton(); }
+    function stopQuiz() { if (!quizActive) return; if (confirm('确定要停止测验吗？目前成绩与进度将会储存，下次可恢复。')) { saveProgress(); quizActive = false; quizPanel.classList.add('hidden'); emailPanel.classList.remove('hidden'); setupPanel.classList.add('hidden'); const remaining = getRemainingQuestions(); emailHint.innerHTML = `⏸️ 测验已停止。得分：${score}，尚未完成的题数：${remaining}。进度已储存，下次可恢复。`; updateSavedSessionsList(); updateFloatingEmailButton(); } }
+    function restartQuiz() { resetToSetup(); studentNameInput.value = ''; studentName = ''; checkResumeAvailability(""); updateSavedSessionsList(); updateFloatingEmailButton(); }
+    startQuizBtn.addEventListener('click', startNewQuiz);
+    resumeQuizBtn.addEventListener('click', () => { const name = studentNameInput.value.trim(); if (!name) { showNotice('请先输入姓名。'); return; } resumeQuiz(name); });
+    stopQuizBtn.addEventListener('click', stopQuiz);
+    nextBtn.addEventListener('click', goToNextQuestion);
+    sendEmailBtn.addEventListener('click', () => sendResultEmail(false));
+    sendEmailDuringQuizBtn.addEventListener('click', () => sendResultEmail(false));
+    floatingEmailBtn.addEventListener('click', () => sendResultEmail(true));
+    restartBtn.addEventListener('click', restartQuiz);
+    studentNameInput.addEventListener('input', () => { const name = studentNameInput.value.trim(); checkResumeAvailability(name); if (!quizActive) { if (!quizActive && !studentName) { floatingEmailBtn.classList.add('hidden'); } } });
+    studentNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); const name = studentNameInput.value.trim(); if (!name) return; const existing = loadProgress(name); if (existing && !quizActive) { if (confirm(`「${name}」已有储存的进度（得分 ${existing.score}，剩余 ${getRemainingQuestions(existing.score || 0)} 题）。\n\n按「确定」恢复进度。\n按「取消」开始新测验（会覆盖旧进度）。`)) { resumeQuiz(name); return; } } startNewQuiz(); } });
+    resetToSetup(); updateSavedSessionsList(); updateSoundToggleUI();
+    window.addEventListener('beforeunload', () => { if (quizActive && studentName) { saveProgress(); } });
+    setInterval(() => { if (quizActive && studentName) { saveProgress(); } }, 30000);
+  })();
+</script>
+</body>
+</html>

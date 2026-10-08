@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HSK 分级汉字拼音测验">
+  <title>HSK 汉字拼音测验</title>
+  <style>
+    :root { font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif; color: #172033; background: #f4f7fb; }
+    * { box-sizing: border-box; } body { margin: 0; } main { width: min(1080px, calc(100% - 32px)); margin: auto; padding: 48px 0 72px; }
+    header { text-align: center; margin-bottom: 32px; } h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.1rem); } header p { color: #63708a; font-size: 1.05rem; line-height: 1.7; margin: 12px auto 0; }
+    .level { --accent: #4f7cff; background: #fff; border-top: 6px solid var(--accent); border-radius: 22px; padding: 24px; margin-top: 22px; box-shadow: 0 10px 28px rgb(22 35 59 / 8%); } .level-2, .level-5, .level-8 { --accent: #18a575; } .level-3, .level-6, .level-9 { --accent: #df8a30; }
+    .level-title { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 18px; } .level-title span { color: #69768e; font-size: .78rem; letter-spacing: .08em; } h2 { margin: 3px 0 0; font-size: 1.55rem; } .level-title b { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, white); border-radius: 999px; padding: 7px 12px; font-size: .85rem; white-space: nowrap; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; } .grid a { border: 1px solid #e0e6ef; border-radius: 15px; color: inherit; display: flex; flex-direction: column; min-height: 120px; padding: 16px; text-decoration: none; transition: .15s ease; } .grid a:hover, .grid a:focus-visible { border-color: var(--accent); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 18%, transparent); transform: translateY(-3px); outline: none; } .grid strong { font-size: 1.05rem; } .grid em { color: var(--accent); font-size: .9rem; font-style: normal; margin-top: 7px; } .grid small { color: #68758d; margin-top: auto; padding-top: 16px; }
+    footer { color: #69768e; font-size: .88rem; margin-top: 28px; text-align: center; } @media (max-width: 560px) { main { width: min(100% - 24px, 1080px); padding-top: 28px; } .level { padding: 18px; } .level-title { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><h1>HSK 汉字拼音测验</h1><p>选择 HSK 等级后开始练习。每个测验包含 100 个汉字。</p></header>
+
+      <section class="level level-1">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 1 级</h2></div><b>3 个测验</b></div>
+        <div class="grid">
+          <a href="100.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="200.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="300.html"><strong>测验 3</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-2">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 2 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="400.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="500.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-3">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 3 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="600.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="700.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-4">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 4 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="800.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="900.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-5">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 5 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="1000.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="1100.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-6">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 6 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="1200.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="1300.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-7">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 7 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="1400.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="1500.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-8">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 8 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="1600.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="1700.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+      <section class="level level-9">
+        <div class="level-title"><div><span>汉语水平考试</span><h2>HSK 9 级</h2></div><b>2 个测验</b></div>
+        <div class="grid">
+          <a href="1800.html"><strong>测验 1</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+          <a href="1900.html"><strong>测验 2</strong><em>100 个汉字</em><small>开始练习 →</small></a>
+        </div>
+      </section>
+    <footer>答错的汉字会在当前测验中再次出现，直到答对为止。</footer>
+  </main>
+</body>
+</html>
